@@ -13,10 +13,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func ReleaseIndex(w http.ResponseWriter, r *http.Request) {
-	releases := Releases{
-		Release{Title: "First Release", CatalogId: "R001"},
-		Release{Title: "Second Release", CatalogId: "R002"},
-	}
+	releases := GetReleases()
 
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
