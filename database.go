@@ -12,6 +12,8 @@ func Database() *gorm.DB {
 		panic(err)
 	}
 
+	db.AutoMigrate(&Release{})
+
 	return db
 }
 

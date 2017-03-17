@@ -25,6 +25,12 @@ var routes = Routes{
 		ReleaseIndex,
 	},
 	Route{
+		"ReleaseIndex",
+		"POST",
+		"/releases",
+		ReleaseCreate,
+	},
+	Route{
 		"ReleaseShow",
 		"GET",
 		"/releases/{releaseId}",
