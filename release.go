@@ -20,6 +20,13 @@ func GetReleases() interface{} {
 	return results.Value
 }
 
+func (r *Release) Get(id string) interface{} {
+	db := Database()
+	defer db.Close()
+
+	return db.Find(r, id)
+}
+
 func (r *Release) Create() interface{} {
 	db := Database()
 	defer db.Close()

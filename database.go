@@ -16,7 +16,3 @@ func Database() *gorm.DB {
 
 	return db
 }
-
-// type DBCaller interface {
-// 	GetAll() interface{}
-// }
