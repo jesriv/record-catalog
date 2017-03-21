@@ -26,15 +26,15 @@ func ReleaseCreate(w http.ResponseWriter, r *http.Request) {
 
 	body := readBody(r.Body)
 
-    if err := json.Unmarshal(body, &release); err != nil {
-        jsonHeaders(w, 422)
-        jsonResponse(w, err)
-    }
+	if err := json.Unmarshal(body, &release); err != nil {
+		jsonHeaders(w, 422)
+		jsonResponse(w, err)
+	}
 
-    new_release := release.Create()
+	new_release := release.Create()
 
-    jsonHeaders(w, http.StatusCreated)
-    jsonResponse(w, new_release)
+	jsonHeaders(w, http.StatusCreated)
+	jsonResponse(w, new_release)
 }
 
 func ReleaseShow(w http.ResponseWriter, r *http.Request) {
@@ -53,10 +53,10 @@ func ReleaseUpdate(w http.ResponseWriter, r *http.Request) {
 
 	body := readBody(r.Body)
 
-    if err := json.Unmarshal(body, &release); err != nil {
-        jsonHeaders(w, 422)
-        jsonResponse(w, err)
-    }
+	if err := json.Unmarshal(body, &release); err != nil {
+		jsonHeaders(w, 422)
+		jsonResponse(w, err)
+	}
 
 	updated_release := release.Update(vars["releaseId"])
 
@@ -71,20 +71,20 @@ func jsonHeaders(w http.ResponseWriter, code int) {
 
 func jsonResponse(w http.ResponseWriter, res interface{}) {
 	if err := json.NewEncoder(w).Encode(res); err != nil {
-        panic(err)
-    }
+		panic(err)
+	}
 }
 
 func readBody(rBody io.ReadCloser) []byte {
 	body, err := ioutil.ReadAll(io.LimitReader(rBody, 1048576))
 
 	if err != nil {
-        panic(err)
-    }
+		panic(err)
+	}
 
-    if err := rBody.Close(); err != nil {
-        panic(err)
-    }
+	if err := rBody.Close(); err != nil {
+		panic(err)
+	}
 
-    return body
+	return body
 }
