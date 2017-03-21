@@ -17,16 +17,16 @@ func GetReleases() interface{} {
 	defer db.Close()
 
 	var releases []Release
-	results := db.Find(&releases)
+	// results := 
 
-	return results.Value
+	return db.Find(&releases).Value
 }
 
 func (r *Release) Get(id string) interface{} {
 	db := Database()
 	defer db.Close()
 
-	return db.Find(r, id)
+	return db.Find(r, id).Value
 }
 
 func (r *Release) Create() interface{} {
