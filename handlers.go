@@ -17,40 +17,24 @@ func Index(w http.ResponseWriter, r *http.Request) {
 func ReleaseIndex(w http.ResponseWriter, r *http.Request) {
 	releases := GetReleases()
 
-	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-
-	if err := json.NewEncoder(w).Encode(releases); err != nil {
-		panic(err)
-	}
+	jsonHeaders(w, http.StatusOK)
+	jsonResponse(w, releases)
 }
 
 func ReleaseCreate(w http.ResponseWriter, r *http.Request) {
 	var release Release
-	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 
-	if err != nil {
-        panic(err)
-    }
-    if err := r.Body.Close(); err != nil {
-        panic(err)
-    }
+	body := readBody(r.Body)
+
     if err := json.Unmarshal(body, &release); err != nil {
-        w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-        w.WriteHeader(422) // unprocessable entity
-        if err := json.NewEncoder(w).Encode(err); err != nil {
-            panic(err)
-        }
+        jsonHeaders(w, 422)
+        jsonResponse(w, err)
     }
 
-    new_r := release.Create()
+    new_release := release.Create()
 
-    w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-    w.WriteHeader(http.StatusCreated)
-    if err := json.NewEncoder(w).Encode(new_r); err != nil {
-        panic(err)
-    }
-
+    jsonHeaders(w, http.StatusCreated)
+    jsonResponse(w, new_release)
 }
 
 func ReleaseShow(w http.ResponseWriter, r *http.Request) {
@@ -59,40 +43,48 @@ func ReleaseShow(w http.ResponseWriter, r *http.Request) {
 	var release Release
 	result := release.Get(vars["releaseId"])
 
-	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-
-	if err := json.NewEncoder(w).Encode(result); err != nil {
-		panic(err)
-	}
+	jsonHeaders(w, http.StatusOK)
+	jsonResponse(w, result)
 }
 
 func ReleaseUpdate(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	var release Release
 
-	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+	body := readBody(r.Body)
+
+    if err := json.Unmarshal(body, &release); err != nil {
+        jsonHeaders(w, 422)
+        jsonResponse(w, err)
+    }
+
+	updated_release := release.Update(vars["releaseId"])
+
+	jsonHeaders(w, http.StatusOK)
+	jsonResponse(w, updated_release)
+}
+
+func jsonHeaders(w http.ResponseWriter, code int) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(code)
+}
+
+func jsonResponse(w http.ResponseWriter, res interface{}) {
+	if err := json.NewEncoder(w).Encode(res); err != nil {
+        panic(err)
+    }
+}
+
+func readBody(rBody io.ReadCloser) []byte {
+	body, err := ioutil.ReadAll(io.LimitReader(rBody, 1048576))
 
 	if err != nil {
         panic(err)
     }
-    if err := r.Body.Close(); err != nil {
+
+    if err := rBody.Close(); err != nil {
         panic(err)
     }
-    if err := json.Unmarshal(body, &release); err != nil {
-        w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-        w.WriteHeader(422) // unprocessable entity
-        if err := json.NewEncoder(w).Encode(err); err != nil {
-            panic(err)
-        }
-    }
 
-	updated_r := release.Update(vars["releaseId"])
-
-	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-
-	if err := json.NewEncoder(w).Encode(updated_r); err != nil {
-        panic(err)
-    }
+    return body
 }
