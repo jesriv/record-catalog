@@ -36,4 +36,10 @@ var routes = Routes{
 		"/releases/{releaseId}",
 		ReleaseShow,
 	},
+	Route{
+		"ReleaseUpdate",
+		"PUT",
+		"/releases/{releaseId}",
+		ReleaseUpdate,
+	},
 }

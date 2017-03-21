@@ -66,3 +66,33 @@ func ReleaseShow(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 }
+
+func ReleaseUpdate(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	var release Release
+
+	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+
+	if err != nil {
+        panic(err)
+    }
+    if err := r.Body.Close(); err != nil {
+        panic(err)
+    }
+    if err := json.Unmarshal(body, &release); err != nil {
+        w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+        w.WriteHeader(422) // unprocessable entity
+        if err := json.NewEncoder(w).Encode(err); err != nil {
+            panic(err)
+        }
+    }
+
+	updated_r := release.Update(vars["releaseId"])
+
+	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+
+	if err := json.NewEncoder(w).Encode(updated_r); err != nil {
+        panic(err)
+    }
+}
