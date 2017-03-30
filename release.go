@@ -17,7 +17,6 @@ func GetReleases() interface{} {
 	defer db.Close()
 
 	var releases []Release
-	// results := 
 
 	return db.Find(&releases).Value
 }

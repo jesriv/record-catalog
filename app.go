@@ -6,6 +6,8 @@ import (
 )
 
 func main() {
+	MigrateDatabase()
+	
 	router := NewRouter()
 
 	log.Fatal(http.ListenAndServe(":8080", router))

@@ -42,4 +42,10 @@ var routes = Routes{
 		"/releases/{releaseId}",
 		ReleaseUpdate,
 	},
+	Route{
+		"Authenticate",
+		"POST",
+		"/auth",
+		Authenticate,		
+	},
 }

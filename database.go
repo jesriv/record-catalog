@@ -16,7 +16,12 @@ func Database() *gorm.DB {
 		panic(err)
 	}
 
-	db.AutoMigrate(&Release{})
-
 	return db
+}
+
+func MigrateDatabase() {
+	db := Database()
+	db.AutoMigrate(&Release{})
+	db.AutoMigrate(&User{})
+	db.Close()
 }

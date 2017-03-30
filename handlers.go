@@ -64,6 +64,22 @@ func ReleaseUpdate(w http.ResponseWriter, r *http.Request) {
 	jsonResponse(w, updated_release)
 }
 
+func Authenticate(w http.ResponseWriter, r *http.Request) {
+	var user User
+
+	body := readBody(r.Body)
+
+	if err := json.Unmarshal(body, &user); err != nil {
+		jsonHeaders(w, 422)
+		jsonResponse(w, err)
+	}
+
+	result := user.Authenticate()
+
+	jsonHeaders(w, http.StatusOK)
+	jsonResponse(w, result)
+}
+
 func jsonHeaders(w http.ResponseWriter, code int) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(code)
