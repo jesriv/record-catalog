@@ -74,10 +74,13 @@ func Authenticate(w http.ResponseWriter, r *http.Request) {
 		jsonResponse(w, err)
 	}
 
-	result := user.Authenticate()
-
-	jsonHeaders(w, http.StatusOK)
-	jsonResponse(w, result)
+	if result, err := user.Authenticate(); err != nil {
+		jsonHeaders(w, 401)
+		jsonResponse(w, err)		
+	} else {
+		jsonHeaders(w, http.StatusOK)
+		jsonResponse(w, result)
+	}
 }
 
 func jsonHeaders(w http.ResponseWriter, code int) {

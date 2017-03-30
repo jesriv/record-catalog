@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/jinzhu/gorm"
+	"golang.org/x/crypto/bcrypt"
+
 )
 
 type User struct {
@@ -21,13 +23,22 @@ func GetUsers() interface{} {
 	return db.Find(&users).Value
 }
 
-func (u *User) Authenticate() interface{} {
+func (u *User) Authenticate() (interface{}, error) {
 	db := Database()
 	defer db.Close()
 
-	var users []User
+	var user User
 
-	return db.Where("username = ? AND password = ?", u.Username, u.Password).Find(&users).Value
+	result := db.Where("username = ?", u.Username).First(&user).Value
+	hashedPassword := result.(*User).Password
+	
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(u.Password));
+	
+	if err != nil {
+		return nil, err
+	}
+
+	return result, err
 }
 
 func (u *User) Create() interface{} {
@@ -37,3 +48,13 @@ func (u *User) Create() interface{} {
 	return db.Create(u)
 }
 
+func (u *User) BeforeCreate() (err error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+	if err != nil {
+		panic(err)
+	}
+
+	u.Password = string(hashedPassword)
+	
+	return
+}
