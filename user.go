@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
-
 )
 
 type User struct {
@@ -23,7 +22,7 @@ func GetUsers() interface{} {
 	return db.Find(&users).Value
 }
 
-func (u *User) Authenticate() (interface{}, error) {
+func (u *User) Authenticate() (string, error) {
 	db := Database()
 	defer db.Close()
 
@@ -35,10 +34,10 @@ func (u *User) Authenticate() (interface{}, error) {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(u.Password));
 	
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return result, err
+	return NewToken(result.(*User))
 }
 
 func (u *User) Create() interface{} {

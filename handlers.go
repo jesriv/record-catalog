@@ -72,6 +72,7 @@ func Authenticate(w http.ResponseWriter, r *http.Request) {
 	if err := json.Unmarshal(body, &user); err != nil {
 		jsonHeaders(w, 422)
 		jsonResponse(w, err)
+		return
 	}
 
 	if result, err := user.Authenticate(); err != nil {
