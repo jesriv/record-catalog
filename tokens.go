@@ -21,9 +21,9 @@ func NewToken(user *User) (string, error) {
 	return tokenString, err
 }
 
-func ValidToken(myToken string, myKey string) bool {
+func ValidToken(myToken string) bool {
 	token, err := jwt.Parse(myToken, func(token *jwt.Token) (interface{}, error) {
-		return []byte(myKey), nil
+		return []byte(signingKey), nil
 	})
 
 	if err == nil && token.Valid {

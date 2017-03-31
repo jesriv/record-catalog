@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"io"
+	"strings"
 	
 	"github.com/gorilla/mux"
 )
@@ -82,6 +83,15 @@ func Authenticate(w http.ResponseWriter, r *http.Request) {
 		jsonHeaders(w, http.StatusOK)
 		jsonResponse(w, result)
 	}
+}
+
+
+// Respons and request helpers
+
+func readAuthToken(r *http.Request) string {
+	authHeader := r.Header["Authorization"][0]
+	token := strings.Fields(authHeader)
+	return token[1]
 }
 
 func jsonHeaders(w http.ResponseWriter, code int) {
