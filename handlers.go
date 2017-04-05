@@ -32,10 +32,16 @@ func ReleaseCreate(w http.ResponseWriter, r *http.Request) {
 		jsonResponse(w, err)
 	}
 
-	new_release := release.Create()
+	token := readAuthToken(r)
 
-	jsonHeaders(w, http.StatusCreated)
-	jsonResponse(w, new_release)
+	if ok := ValidToken(token); ok {
+		new_release := release.Create()
+		jsonHeaders(w, http.StatusCreated)
+		jsonResponse(w, new_release)
+	} else {
+		jsonHeaders(w, 401)
+	}
+	
 }
 
 func ReleaseShow(w http.ResponseWriter, r *http.Request) {
@@ -59,10 +65,15 @@ func ReleaseUpdate(w http.ResponseWriter, r *http.Request) {
 		jsonResponse(w, err)
 	}
 
-	updated_release := release.Update(vars["releaseId"])
+	token := readAuthToken(r)
 
-	jsonHeaders(w, http.StatusOK)
-	jsonResponse(w, updated_release)
+	if ok := ValidToken(token); ok {
+		updated_release := release.Update(vars["releaseId"])
+		jsonHeaders(w, http.StatusOK)
+		jsonResponse(w, updated_release)
+	} else {
+		jsonHeaders(w, 401)
+	}
 }
 
 func Authenticate(w http.ResponseWriter, r *http.Request) {
@@ -86,7 +97,7 @@ func Authenticate(w http.ResponseWriter, r *http.Request) {
 }
 
 
-// Respons and request helpers
+// Response and request helpers
 
 func readAuthToken(r *http.Request) string {
 	authHeader := r.Header["Authorization"][0]

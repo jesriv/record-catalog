@@ -7,7 +7,7 @@ import (
 type Release struct {
 	gorm.Model
 	Title		string	`json:"title"`
-	CatalogId	string	`json:"catalog-id"`
+	CatalogId	string	`json:"catalog_id"`
 }
 
 type Releases []Release
